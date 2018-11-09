@@ -1,25 +1,154 @@
-apply plugin: 'groovy'
-apply plugin: 'maven'
+//test 1
+//task showTasks << {
+//    println tasks.class
+//    println "tasks.size:" + tasks.size()
+//}
 
-repositories {
-  mavenCentral()
+//test 2
+//task firstTask {
+//    println '####################First#####################'
+//    println buildDir
+//    println description
+//}
+//task copyFileTask(type: Copy, dependsOn: firstTask) {//firstTask要在之前定义
+//    println '#####copy start######'
+//    from 'copy-test.iml'
+//    into 'des'//会自动创建
+//    println '#####copy end######'
+//}
+//
+//task last {
+//    println '####################Last#####################'
+//}
+
+//test 3
+//task hello1 {
+//    println 'hello1'
+//
+//}
+
+//task hello2 {
+//    doLast {
+//        println ' world'
+//        println '#########################################'
+//    }
+//    doFirst {
+//        println '#########################################'
+//        println buildDir
+//        print 'hello '
+//
+//    }
+//}
+
+//gradle -q hello1 静默执行
+
+//test 4
+//task hello << {
+//    String someString = 'AFDSWds132'
+//    println 'Origin : '+ someString
+//    println 'Uper : '+ someString.toLowerCase()
+//}
+
+//多任务，增加依赖
+//gradle -q tasks --all
+//ask0, task1, task2, task3
+//4.times { counter ->
+//    task "task$counter" << {
+//        println "I'm task number $counter"
+//    }
+//}
+//task1.dependsOn task0, task3
+
+//增加任务行为
+//task hello<<{
+//    print(" ")
+//}
+//hello.doFirst{
+//    print 'hello'
+//}
+//hello.doLast{
+//    println 'world'
+//}
+
+//短标记法,每个task都是一个构建脚本的属性，所以可以通过“$”这种短标记法来访问任务
+//task hello<<{
+//    print("insert")
+//}
+//hello.doFirst {
+//    println "called from $hello.name task"
+//}
+
+//增加自定义属性
+//task hello {
+//    ext.testName = "name"
+//    ext.testSex = "sex"
+//}
+//
+//task printTask << {
+//    println(hello.ext.testName)
+//    println(hello.testSex)
+//}
+
+//调用Ant任务
+//利用AntBuilder执行ant.loadfiile。
+//task loadfile << {
+//    def files = file('config').listFiles().sort()
+//    files.each { File file ->
+//        if (file.isFile()) {
+//            ant.loadfile(srcFile: file, property: file.name)
+//            println "************ $file.name start ************"
+//            println "${ant.properties[file.name]}"
+//            println "************$file.name   end  ************"
+//            println ""
+//        }
+//    }
+//
+//}
+
+//方法抽取
+//task loadfile << {
+//    fileList('config').each { File file ->
+//        ant.loadfile(srcFile: file, property: file.name)
+//        println "************ $file.name start ************"
+//        println "${ant.properties[file.name]}"
+//        println "************$file.name   end  ************"
+//        println ""
+//    }
+//
+//}
+//
+//File[] fileList(String dir) {
+//    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
+//}
+
+//定义默认任务 gradle -q
+//defaultTasks('clean', 'start', 'run', 'finish')
+//task clean << {
+//    println 'task---clean'
+//}
+//task start << {
+//    println 'task---start'
+//}
+//task run << {
+//    println 'task---run'
+//}
+//task finish << {
+//    println 'task---finish'
+//}
+
+//whenReady会在release任务执行之前影响它
+task distribution<< {
+    println "We build the zip with version=$version"
 }
 
-dependencies {
-  compile gradleApi()
-  compile localGroovy()
+task release(dependsOn: 'distribution')<<  {
+    println 'We release now'
 }
 
-//设置maven deployer
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      //设置插件的GAV参数
-      pom.groupId = 'com.branch.plugin'
-      pom.artifactId = 'dellog'
-      pom.version = '1.0.0'
-      //文件发布到下面目录
-      repository(url: uri('../repo'))
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask(release)) {
+        version = '1.0'
+    } else {
+        version = '1.0-SNAPSHOT'
     }
-  }
 }
