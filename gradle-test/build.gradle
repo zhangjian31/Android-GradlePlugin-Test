@@ -137,18 +137,49 @@
 //}
 
 //whenReady会在release任务执行之前影响它
-task distribution<< {
-    println "We build the zip with version=$version"
-}
+//task distribution<< {
+//    println "We build the zip with version=$version"
+//}
+//
+//task release(dependsOn: 'distribution')<<  {
+//    println 'We release now'
+//}
+//
+//gradle.taskGraph.whenReady { taskGraph ->
+//    if (taskGraph.hasTask(release)) {
+//        version = '1.0'
+//    } else {
+//        version = '1.0-SNAPSHOT'
+//    }
+//}
 
-task release(dependsOn: 'distribution')<<  {
-    println 'We release now'
+class Example{
+     def test(clo){
+         clo.call("abc")
+    }
 }
+task dis << {
+    Example example = new Example()
+    def clos = {println "the paramas is ${it}"}
+    example.test(clos)
 
-gradle.taskGraph.whenReady { taskGraph ->
-    if (taskGraph.hasTask(release)) {
-        version = '1.0'
-    } else {
-        version = '1.0-SNAPSHOT'
+    def list = [1, 2, 3, 4, 5]
+    list.each {println "$it"}
+    list.each { int num -> if (num > 2) println num }
+    list.each {  if ("${it}" > 2) println "${it}" }
+
+    def mp = ["TopicName" : "Maps", "TopicDescription" : "Methods in Maps"]
+    mp.each {println it}
+    mp.each {println "${it.key} :${it.value}"}
+
+    File[] files = file('config').listFiles()
+    files.each { File file ->
+        if (file.isFile()) {
+            ant.loadfile(srcFile: file, property: file.name)
+            println "************ $file.name start ************"
+            println "${ant.properties[file.name]}"
+            println "************$file.name   end  ************"
+            println ""
+        }
     }
 }
