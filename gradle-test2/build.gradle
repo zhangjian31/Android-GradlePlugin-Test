@@ -1,0 +1,24 @@
+//task check<<{
+//    println name
+//    println project.name
+//    println project.path
+//    println project.projectDir
+//}
+
+//task hello
+//
+//println hello.name
+//println project.hello.name
+
+task compile << {
+    println 'We are doing the compile.'
+}
+
+compile.doFirst {
+    // Here you would put arbitrary conditions in real life.
+    // But this is used in an integration test so we want defined behavior.
+    if (true) { throw new StopExecutionException() }
+}
+task myTask(dependsOn: 'compile') << {
+    println 'I am not affected'
+}

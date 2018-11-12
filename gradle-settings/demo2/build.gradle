@@ -1,0 +1,5 @@
+task demo2Task<<{
+    println('demo2Task')
+}
+
+description = 'The modle for the demo2'

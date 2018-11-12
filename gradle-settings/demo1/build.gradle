@@ -1,0 +1,14 @@
+//apply plugin: 'eclipse'
+apply plugin: 'groovy'
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.2.0'
+    testCompile 'junit:junit:4.11'
+}
+task demo1Task<<{
+    println('demo1Task')
+}
+
+description = 'The modle for the demo1'
